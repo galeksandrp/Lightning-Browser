@@ -36,6 +36,7 @@ public class AdBlock {
     private static final String SPACE = " ";
     private static final String EMPTY = "";
     private final Set<String> mBlockedDomainsList = new HashSet<>();
+    private final Set<String> mHTTPSDomainsList = new HashSet<>();
     private boolean mBlockAds;
     private static final Locale mLocale = Locale.getDefault();
 
@@ -46,6 +47,9 @@ public class AdBlock {
         BrowserApp.getAppComponent().inject(this);
         if (mBlockedDomainsList.isEmpty() && Constants.FULL_VERSION) {
             loadHostsFile(context);
+        }
+        if (mHTTPSDomainsList.isEmpty()) {
+            mHTTPSDomainsList.add("rublacklist.net");
         }
         mBlockAds = mPreferenceManager.getAdBlockEnabled();
     }
@@ -104,6 +108,33 @@ public class AdBlock {
             Log.d(TAG, "URL '" + url + "' is an ad");
         }
         return isOnBlacklist;
+    }
+    
+    /**
+     * a method that determines if the given URL is https enabled or not. It performs
+     * a search of the URL's domain on the https domain hash set.
+     *
+     * @param url the URL to check for being an https enabled
+     * @return true if it is https enabled, false if it is not https enabled
+     */
+    public boolean isHTTPS(@Nullable String url) {
+        if (url == null || !url.startsWith('http://')) {
+            return false;
+        }
+
+        String domain;
+        try {
+            domain = getDomainName(url);
+        } catch (URISyntaxException e) {
+            Log.d(TAG, "URL '" + url + "' is invalid", e);
+            return false;
+        }
+
+        boolean isOnHTTPSlist = mHTTPSDomainsList.contains(domain.toLowerCase(mLocale));
+        if (isOnHTTPSlist) {
+            Log.d(TAG, "URL '" + url + "' is an ad");
+        }
+        return isOnHTTPSlist;
     }
 
     /**
