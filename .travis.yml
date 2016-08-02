@@ -21,6 +21,7 @@ script:
   - ./gradlew assembleDebug --stacktrace
 before_deploy:
   - cd $TRAVIS_BUILD_DIR
+  - ls -R -1
   - echo version > $(git describe --abbrev=40 --always)
   - echo -e "machine github.com\nlogin galeksandrp\npassword $GITHUB_TOKEN" >> ~/.netrc
   - git tag deploy-$(git describe --always) $TRAVIS_COMMIT || true
