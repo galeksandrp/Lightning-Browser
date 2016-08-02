@@ -19,3 +19,24 @@ install:
   - ./gradlew
 script:
   - ./gradlew assembleDebug --stacktrace
+before_deploy:
+  - cd $TRAVIS_BUILD_DIR
+  - echo version > $(git describe --abbrev=40 --always)
+  - echo -e "machine github.com\nlogin galeksandrp\npassword $GITHUB_TOKEN" >> ~/.netrc
+  - git tag deploy-$(git describe --always) $TRAVIS_COMMIT || true
+  - git push --tags
+deploy:
+  provider: releases
+  api_key: $GITHUB_TOKEN
+  skip_cleanup: true
+  file: 
+  - app-lightningLite-debug.apk
+  - app-lightningPlus-debug.apk
+  overwrite: true
+  on:
+    all_branches: true
+branches:
+  except:
+    - /^deploy-.*$/
+notifications:
+  email: false
