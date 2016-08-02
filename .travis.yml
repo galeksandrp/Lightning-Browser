@@ -31,8 +31,10 @@ deploy:
   api_key: $GITHUB_TOKEN
   skip_cleanup: true
   file: 
-  - app-lightningLite-debug.apk
-  - app-lightningPlus-debug.apk
+  - app/build/outputs/apk/app-lightningLite-debug.apk
+  - app/build/outputs/apk/app-lightningLite-debug-unaligned.apk
+  - app/build/outputs/apk/app-lightningPlus-debug.apk
+  - app/build/outputs/apk/app-lightningPlus-debug-unaligned.apk
   overwrite: true
   on:
     all_branches: true
