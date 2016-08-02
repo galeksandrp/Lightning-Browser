@@ -49,7 +49,7 @@ public class AdBlock {
             loadHostsFile(context);
         }
         if (mHTTPSDomainsList.isEmpty()) {
-            mHTTPSDomainsList.add('rublacklist.net');
+            mHTTPSDomainsList.add("rublacklist.net");
         }
         mBlockAds = mPreferenceManager.getAdBlockEnabled();
     }
