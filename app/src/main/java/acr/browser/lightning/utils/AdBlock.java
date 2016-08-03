@@ -49,7 +49,11 @@ public class AdBlock {
             loadHostsFile(context);
         }
         if (mHTTPSDomainsList.isEmpty()) {
-            mHTTPSDomainsList.add("rublacklist.net");
+            mHTTPSDomainsList.add("xvideos.com");
+            mHTTPSDomainsList.add("www.xvideos.com");
+            mHTTPSDomainsList.add("xnxx.com");
+            mHTTPSDomainsList.add("www.xnxx.com");
+            mHTTPSDomainsList.add("multi.xnxx.com");
         }
         mBlockAds = mPreferenceManager.getAdBlockEnabled();
     }
@@ -118,7 +122,7 @@ public class AdBlock {
      * @return true if it is https enabled, false if it is not https enabled
      */
     public boolean isHTTPS(@Nullable String url) {
-        if (url == null || !url.startsWith('http://')) {
+        if (url == null || !url.startsWith("http://")) {
             return false;
         }
 
