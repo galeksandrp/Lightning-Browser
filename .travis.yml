@@ -1,5 +1,5 @@
 language: android
-sudo: false
+sudo: required
 android:
   components:
     - tools
@@ -18,7 +18,7 @@ before_install:
 install:
   - ./gradlew
 script:
-  - ./gradlew assembleDebug --stacktrace
+  - ./gradlew assembleRelease --stacktrace
 before_deploy:
   - cd $TRAVIS_BUILD_DIR
   - echo version > $(git describe --abbrev=40 --always)
