@@ -21,19 +21,24 @@ script:
   - ./gradlew assembleRelease --stacktrace
 before_deploy:
   - cd $TRAVIS_BUILD_DIR
+  - openssl aes-256-cbc -K $encrypted_5a432c4ab535_key -iv $encrypted_5a432c4ab535_iv -in my-release-key.keystore.enc -out my-release-key.keystore -d
+  - cp app/build/outputs/apk/app-lightningLite-release-unsigned.apk app/build/outputs/apk/app-lightningLite-release-signed.apk
+  - cp app/build/outputs/apk/app-lightningPlus-release-unsigned.apk app/build/outputs/apk/app-lightningPlus-release-signed.apk
+  - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore my-release-key.keystore -storepass $KEYSTORE_PASS app/build/outputs/apk/app-lightningLite-release-signed.apk alias_name
+  - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore my-release-key.keystore -storepass $KEYSTORE_PASS app/build/outputs/apk/app-lightningPlus-release-signed.apk alias_name
+  - $ANDROID_HOME/build-tools/23.0.3/zipalign -v 4 app/build/outputs/apk/app-lightningLite-release-signed.apk app/build/outputs/apk/app-lightningLite-release-signed-aligned.apk
+  - $ANDROID_HOME/build-tools/23.0.3/zipalign -v 4 app/build/outputs/apk/app-lightningPlus-release-signed.apk app/build/outputs/apk/app-lightningPlus-release-signed-aligned.apk
   - echo version > $(git describe --abbrev=40 --always)
   - echo -e "machine github.com\nlogin galeksandrp\npassword $GITHUB_TOKEN" >> ~/.netrc
   - git tag deploy-$(git describe --always) $TRAVIS_COMMIT || true
-  - git push --tags
+  - git push origin deploy-$(git describe --always)
 deploy:
   provider: releases
   api_key: $GITHUB_TOKEN
   skip_cleanup: true
   file: 
-  - app/build/outputs/apk/app-lightningLite-debug.apk
-  - app/build/outputs/apk/app-lightningLite-debug-unaligned.apk
-  - app/build/outputs/apk/app-lightningPlus-debug.apk
-  - app/build/outputs/apk/app-lightningPlus-debug-unaligned.apk
+  - app/build/outputs/apk/*
+  file_glob: true
   overwrite: true
   on:
     all_branches: true
