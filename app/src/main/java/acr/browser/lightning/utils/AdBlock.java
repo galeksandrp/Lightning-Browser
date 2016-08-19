@@ -49,11 +49,7 @@ public class AdBlock {
             loadHostsFile(context);
         }
         if (mHTTPSDomainsList.isEmpty()) {
-            mHTTPSDomainsList.add("xvideos.com");
-            mHTTPSDomainsList.add("www.xvideos.com");
-            mHTTPSDomainsList.add("xnxx.com");
-            mHTTPSDomainsList.add("www.xnxx.com");
-            mHTTPSDomainsList.add("multi.xnxx.com");
+//HTTPS rules
         }
         mBlockAds = mPreferenceManager.getAdBlockEnabled();
     }

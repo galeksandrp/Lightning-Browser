@@ -12,7 +12,19 @@ android:
   licenses:
     - 'android-sdk-license-.+'
     - '.*intel.+'
+addons:
+  apt:
+    packages:
+    - tor
 before_install:
+  - wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 -O - | tar xfj -
+  - echo 'deb http://us-central1.gce.archive.ubuntu.com/ubuntu/ trusty-backports main universe' | sudo tee /etc/apt/sources.list.d/trusty-backports.list
+  - "echo -e 'Package: *\nPin: release a=trusty-backports\nPin-Priority: 100' | sudo tee /etc/apt/preferences.d/trusty-backports"
+  - sudo apt-get update
+  - sudo apt-get install -t trusty-backports torsocks
+  - npm install
+  - until bash -c 'torsocks phantomjs-2.1.1-linux-x86_64/bin/phantomjs adblock.js > AdBlock.java'; do echo retry; done
+  - mv AdBlock.java app/src/main/java/acr/browser/lightning/utils/AdBlock.java
   - chmod +x gradlew
   - git submodule update --init --recursive
 install:
