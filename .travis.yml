@@ -13,6 +13,8 @@ android:
     - 'android-sdk-license-.+'
     - '.*intel.+'
 before_install:
+  - openssl aes-256-cbc -K $encrypted_5a432c4ab535_key -iv $encrypted_5a432c4ab535_iv -in secrets.tar.enc -out secrets.tar -d
+  - tar xvf secrets.tar
   - chmod +x gradlew
   - git submodule update --init --recursive
 install:
@@ -21,7 +23,6 @@ script:
   - ./gradlew assembleRelease --stacktrace
 before_deploy:
   - cd $TRAVIS_BUILD_DIR
-  - openssl aes-256-cbc -K $encrypted_5a432c4ab535_key -iv $encrypted_5a432c4ab535_iv -in my-release-key.keystore.enc -out my-release-key.keystore -d
   - cp app/build/outputs/apk/app-lightningLite-release-unsigned.apk app/build/outputs/apk/app-lightningLite-release-signed.apk
   - cp app/build/outputs/apk/app-lightningPlus-release-unsigned.apk app/build/outputs/apk/app-lightningPlus-release-signed.apk
   - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore my-release-key.keystore -storepass $KEYSTORE_PASS app/build/outputs/apk/app-lightningLite-release-signed.apk alias_name
