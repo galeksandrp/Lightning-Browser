@@ -27,19 +27,17 @@ before_install:
   - mv AdBlock.java app/src/main/java/acr/browser/lightning/utils/AdBlock.java
   - chmod +x gradlew
   - git submodule update --init --recursive
+  - openssl aes-256-cbc -K $encrypted_5a432c4ab535_key -iv $encrypted_5a432c4ab535_iv -in my-release-key.keystore.enc -out my-release-key.keystore -d
+  - echo "RELEASE_STORE_FILE=../my-release-key.keystore" > gradle.properties
+  - echo "RELEASE_STORE_PASSWORD=$KEYSTORE_PASS" >> gradle.properties
+  - echo "RELEASE_KEY_ALIAS=alias_name" >> gradle.properties
+  - echo "RELEASE_KEY_PASSWORD=$KEYSTORE_PASS" >> gradle.properties
 install:
   - ./gradlew
 script:
   - ./gradlew assembleRelease --stacktrace
 before_deploy:
   - cd $TRAVIS_BUILD_DIR
-  - openssl aes-256-cbc -K $encrypted_5a432c4ab535_key -iv $encrypted_5a432c4ab535_iv -in my-release-key.keystore.enc -out my-release-key.keystore -d
-  - cp app/build/outputs/apk/app-lightningLite-release-unsigned.apk app/build/outputs/apk/app-lightningLite-release-signed.apk
-  - cp app/build/outputs/apk/app-lightningPlus-release-unsigned.apk app/build/outputs/apk/app-lightningPlus-release-signed.apk
-  - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore my-release-key.keystore -storepass $KEYSTORE_PASS app/build/outputs/apk/app-lightningLite-release-signed.apk alias_name
-  - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore my-release-key.keystore -storepass $KEYSTORE_PASS app/build/outputs/apk/app-lightningPlus-release-signed.apk alias_name
-  - $ANDROID_HOME/build-tools/23.0.3/zipalign -v 4 app/build/outputs/apk/app-lightningLite-release-signed.apk app/build/outputs/apk/app-lightningLite-release-signed-aligned.apk
-  - $ANDROID_HOME/build-tools/23.0.3/zipalign -v 4 app/build/outputs/apk/app-lightningPlus-release-signed.apk app/build/outputs/apk/app-lightningPlus-release-signed-aligned.apk
   - echo version > $(git describe --abbrev=40 --always)
   - echo -e "machine github.com\nlogin galeksandrp\npassword $GITHUB_TOKEN" >> ~/.netrc
   - git tag deploy-$(git describe --always) $TRAVIS_COMMIT || true
